@@ -5,7 +5,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +30,20 @@ import java.util.Map;
 public class MenuListFragment extends Fragment {
 
     private Activity _parentActivity;
+    private boolean _isLayoutLand;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _parentActivity = getActivity();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        View menuThanksActivity = _parentActivity.findViewById(R.id.fragmentThanks);
+        _isLayoutLand = menuThanksActivity != null;
     }
 
     @Override
@@ -82,13 +94,27 @@ public class MenuListFragment extends Fragment {
             String menuName = item.get("name");
             String menuPrice = item.get("price");
 
-            Intent intent = new Intent(_parentActivity, ThanksActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("menuName", menuName);
+            bundle.putString("menuPrice", menuPrice);
 
-            // 次の画面にデータを送る
-            intent.putExtra("menuName", menuName);
-            intent.putExtra("menuPrice", menuPrice);
+            if (_isLayoutLand) {
+                FragmentManager manager = getFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
 
-            startActivity(intent);
+                ThanksFragment thanksFragment = new ThanksFragment();
+                thanksFragment.setArguments(bundle);
+
+                transaction.replace(R.id.fragmentThanks, thanksFragment);
+                transaction.commit();
+            }
+            else {
+                Intent intent = new Intent(_parentActivity, ThanksActivity.class);
+
+                // 次の画面にデータを送る
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
         }
     }
 }
