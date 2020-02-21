@@ -3,6 +3,9 @@ package com.example.androidpracticeforjava;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -54,11 +57,55 @@ public class ThanksFragment extends Fragment {
 
         TextView tvMenuName = view.findViewById(R.id.tvMenuName);
         TextView tvMenuPrice = view.findViewById(R.id.tvMenuPrice);
+        TextView purchaseCount = view.findViewById(R.id.purchaseCount);
 
         tvMenuName.setText(menuName);
         tvMenuPrice.setText(menuPrice);
 
+        int count = this.getIncrementCount(menuName);
+        purchaseCount.setText(String.valueOf(count));
+
         return view;
     }
 
+    private int getIncrementCount(String menuName) {
+        int count = 0;
+
+        DatabaseHelper helper = new DatabaseHelper(_parentActivity);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        try {
+            // データ取得処理
+            String sqlSelect = "SELECT * FROM cocktailmemo WHERE name = '" + menuName + "'";
+            Cursor cursor = db.rawQuery(sqlSelect, null);
+
+            while (cursor.moveToNext()) {
+                int idx = cursor.getColumnIndex("count");
+                count = cursor.getInt(idx);
+            }
+
+            count++;
+
+            // なければ初期値として入れる
+            if (count == 1) {
+                String sqlInsert = "INSERT INTO cocktailmemo (name, count) VALUES (?, 1)";
+                SQLiteStatement stmt = db.compileStatement(sqlInsert);
+                stmt.bindString(1, menuName);
+
+                stmt.executeInsert();
+            }
+            else {
+                // データ格納処理
+                String sqlUpdate = "UPDATE cocktailmemo SET count = " + count + " WHERE name = '" + menuName + "'";
+                SQLiteStatement stmt = db.compileStatement(sqlUpdate);
+
+                stmt.executeUpdateDelete();
+            }
+        }
+        finally {
+            db.close();
+        }
+
+        return count;
+    }
 }
