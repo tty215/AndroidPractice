@@ -53,14 +53,14 @@ public class ThanksFragment extends Fragment {
         }
 
         String menuName = bundle.getString("menuName");
-        String menuPrice = bundle.getString("menuPrice");
+        String menuSubdata = bundle.getString("menuSubdata");
 
         TextView tvMenuName = view.findViewById(R.id.tvMenuName);
-        TextView tvMenuPrice = view.findViewById(R.id.tvMenuPrice);
+        TextView tvMenuSubdata = view.findViewById(R.id.tvMenuSubdata);
         TextView purchaseCount = view.findViewById(R.id.purchaseCount);
 
         tvMenuName.setText(menuName);
-        tvMenuPrice.setText(menuPrice);
+        tvMenuSubdata.setText(menuSubdata);
 
         int count = this.getIncrementCount(menuName);
         purchaseCount.setText(String.valueOf(count));

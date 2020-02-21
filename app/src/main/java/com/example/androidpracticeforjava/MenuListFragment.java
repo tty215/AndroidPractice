@@ -42,7 +42,7 @@ public class MenuListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        View menuThanksActivity = _parentActivity.findViewById(R.id.fragmentThanks);
+        View menuThanksActivity = _parentActivity.findViewById(R.id.fragmentResult);
         _isLayoutLand = menuThanksActivity != null;
     }
 
@@ -58,18 +58,30 @@ public class MenuListFragment extends Fragment {
                 new HashMap<String, String>(){
                     {
                         put("name", "唐揚げ定食");
-                        put("price", "800円");
+                        put("subdata", "800円");
                     }
                 },
                 new HashMap<String, String>(){
                     {
                         put("name", "ハンバーグ定食");
-                        put("price", "700円");
+                        put("subdata", "700円");
+                    }
+                },
+                new HashMap<String, String>(){
+                    {
+                        put("name", "東京都");
+                        put("subdata", "新宿区");
+                    }
+                },
+                new HashMap<String, String>(){
+                    {
+                        put("name", "大阪府");
+                        put("subdata", "東大阪市");
                     }
                 }
         ));
 
-        String[] from = {"name", "price"};
+        String[] from = {"name", "subdata"};
         int[] to = {android.R.id.text1, android.R.id.text2};
 
         SimpleAdapter adapter = new SimpleAdapter(
@@ -92,28 +104,49 @@ public class MenuListFragment extends Fragment {
 
             Map<String, String> item = (Map<String, String>) adapterView.getItemAtPosition(i);
             String menuName = item.get("name");
-            String menuPrice = item.get("price");
+            String menuSubdata = item.get("subdata");
 
             Bundle bundle = new Bundle();
             bundle.putString("menuName", menuName);
-            bundle.putString("menuPrice", menuPrice);
+            bundle.putString("menuSubdata", menuSubdata);
 
-            if (_isLayoutLand) {
-                FragmentManager manager = getFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
+            if (menuName.contains("定食")) {
+                if (_isLayoutLand) {
+                    FragmentManager manager = getFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
 
-                ThanksFragment thanksFragment = new ThanksFragment();
-                thanksFragment.setArguments(bundle);
+                    ThanksFragment thanksFragment = new ThanksFragment();
+                    thanksFragment.setArguments(bundle);
 
-                transaction.replace(R.id.fragmentThanks, thanksFragment);
-                transaction.commit();
+                    transaction.replace(R.id.fragmentResult, thanksFragment);
+                    transaction.commit();
+                }
+                else {
+                    Intent intent = new Intent(_parentActivity, ThanksActivity.class);
+
+                    // 次の画面にデータを送る
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
             }
-            else {
-                Intent intent = new Intent(_parentActivity, ThanksActivity.class);
+            else if(menuName.contains("都") || menuName.contains("府")) {
+                if (_isLayoutLand) {
+                    FragmentManager manager = getFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
 
-                // 次の画面にデータを送る
-                intent.putExtras(bundle);
-                startActivity(intent);
+                    WeatherFragment weatherFragment = new WeatherFragment();
+                    weatherFragment.setArguments(bundle);
+
+                    transaction.replace(R.id.fragmentResult, weatherFragment);
+                    transaction.commit();
+                }
+                else {
+                    Intent intent = new Intent(_parentActivity, WeatherActivity.class);
+
+                    // 次の画面にデータを送る
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
             }
         }
     }

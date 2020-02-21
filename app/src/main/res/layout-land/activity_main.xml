@@ -13,7 +13,7 @@
         android:layout_weight="0.4"/>
 
     <FrameLayout
-        android:id="@+id/fragmentThanks"
+        android:id="@+id/fragmentResult"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.6"
