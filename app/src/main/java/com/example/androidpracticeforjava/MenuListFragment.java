@@ -78,6 +78,12 @@ public class MenuListFragment extends Fragment {
                         put("name", "大阪府");
                         put("subdata", "東大阪市");
                     }
+                },
+                new HashMap<String, String>(){
+                    {
+                        put("name", "メディア再生");
+                        put("subdata", "");
+                    }
                 }
         ));
 
@@ -145,6 +151,22 @@ public class MenuListFragment extends Fragment {
 
                     // 次の画面にデータを送る
                     intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            }
+            else if(menuName.contains("メディア再生")) {
+                if (_isLayoutLand) {
+                    FragmentManager manager = getFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+
+                    MediaFragment mediaFragment = new MediaFragment();
+
+                    transaction.replace(R.id.fragmentResult, mediaFragment);
+                    transaction.commit();
+                }
+                else {
+                    Intent intent = new Intent(_parentActivity, MediaActivity.class);
+
                     startActivity(intent);
                 }
             }
