@@ -13,6 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <service
+            android:name=".service.SoundManagerService"
+            android:enabled="true"
+            android:exported="false"></service>
+
         <activity android:name=".MediaActivity" />
         <activity android:name=".WeatherActivity" />
         <activity android:name=".ThanksActivity" />
